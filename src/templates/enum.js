@@ -6,8 +6,18 @@
  * @param {Enum} enumType
  * @return {string}
  */
-export default (name, enumType) =>
+export default ({name, enumType, isJS = false}) => !isJS ?
 
 `export enum ${name} {
 ${enumType.fields.map(field => `    ${field}`).join(',\n')}   
+}` :
+
+`
+/**
+ * @type {{[key: string]: number}}
+ */
+export const ${name} = {
+
+${enumType.fields.map((field, index) => `   ${field}: ${index + 1}`).join(',\n')}
 }`
+

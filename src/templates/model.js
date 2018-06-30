@@ -15,21 +15,23 @@ export const importsToImports = (imports) =>
         `import {${imports[importKey].named.join(', ')}} from '${importKey}'\n`
     ).join('')
 
-/**
- * @function
- * @param {string} name
- * @param {Type} model
- * @return {string}
- */
-export default (name, model) =>
+
+export default (
+/** @type {{name: string, model: Type, isJS: boolean}} */
+{
+    name,
+    model,
+    isJS = false
+}) =>
 
 `
 ${importsToImports(getImports(name, model))}
 
+${isJS ? '/** @class */' : ''}
 ${getDecorators(model.directives)}
 export class ${name} {
 
-${getFields(model.fields)}
+${getFields({fields: model.fields, isJS})}
 
 }
 `

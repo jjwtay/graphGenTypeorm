@@ -4,11 +4,16 @@
 import { getDecorators } from './decorator'
 
 /**
- * @param {Object.<string, Field>} fields 
+ * @function
  * @return {string}
  */
-export const getFields = (fields) =>
-    Object.keys(fields).map(fieldKey => getField(fieldKey, fields[fieldKey])).join('')
+export const getFields = (
+    /** @type {{fields: Object.<string, Field>, isJS: boolean}} */
+    {
+        fields,
+        isJS = false
+    }) =>
+        Object.keys(fields).map(name => getField({name, field: fields[name], isJS})).join('')
 
 /**
  * @param {Field} field
@@ -24,15 +29,27 @@ export const getType = (field) => {
     const type = baseMap[field.type] ? baseMap[field.type] : field.type
     return field.isList ? `${type}[]` : type
 }
-    
-/**
- * @param {string} name
- * @param {Field} field
- * @return {string}
- */
-export const getField = (name, field) =>
+
+const jsDoc = (field) =>
 
 `
+    /**
+     *  @type {${getType(field)}}
+     */`
+
+/**
+ * @return {string}
+ */
+export const getField = (
+    /** @type {{name: string, field: Field, isJS: boolean}} */
+    {
+        name,
+        field,
+        isJS = false
+    }) =>
+
+`
+    ${isJS ? jsDoc(field): ''}
     ${getDecorators(field.directives, '\n    ')}
-    ${name}: ${getType(field)}
+    ${name} ${!isJS ? ': ' + getType(field) : ''}
 `
