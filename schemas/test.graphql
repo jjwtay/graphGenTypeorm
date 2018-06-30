@@ -1,0 +1,29 @@
+# import Entity, PrimaryGeneratedColumn, ManyToMany, ManyToOne, OneToMany, EntityEnum, Column from '../src/typeorm.graphql'
+
+type Author @Entity {
+    id: Int! @PrimaryGeneratedColumn
+    first: String! @Column
+    last: String! @Column
+    books: [Book] @ManyToMany(type: "type => Book", map: "book => book.authors") 
+}
+
+enum BookType @EntityEnum {
+    Fiction,
+    NonFiction
+}
+
+type Book @Entity {
+    id: Int! @PrimaryGeneratedColumn
+    title: String! @Column
+    authors: [Author] @ManyToMany(type: "type => Author", map: "author => author.books")
+    publisher: Publisher @ManyToOne(type: "type => Publisher", map: "publisher => publisher.books")
+    description: String @Column
+    type: BookType @Column
+}
+
+type Publisher @Entity {
+    id: Int! @PrimaryGeneratedColumn
+    name: String! @Column
+    books: [Book] @OneToMany(type: "type => Book", map: "book => book.publisher")
+}
+

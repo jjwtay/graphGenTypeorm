@@ -1,0 +1,20 @@
+directive @ManyToOne on FIELD_DEFINITION
+
+directive @OneToMany on FIELD_DEFINITION
+
+directive @ManyToMany on FIELD_DEFINITION
+
+directive @OneToOne on FIELD_DEFINITION
+
+directive @JoinColumn on FIELD_DEFINITION
+
+directive @Entity on OBJECT
+
+directive @PrimaryGeneratedColumn on FIELD_DEFINITION
+
+directive @Column(
+    type: String
+    length: Int
+) on FIELD_DEFINITION
+
+directive @EntityEnum on OBJECT
