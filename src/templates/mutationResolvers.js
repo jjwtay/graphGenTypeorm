@@ -22,22 +22,26 @@ export const getResolver = (
     }) =>
 `
         ${isJS ? updatedoc(name): ''}
-        async create${name}(root${!isJS ? ': object' : ''}, {data}${!isJS ? `: {data: Create${name}Input}`: ''}) {
-            return await getConnection()
-                            .createQueryBuilder()
-                            .insert()
-                            .into(${name})
-                            .values([data])
+        async create${name}(root${!isJS ? ': object' : ''}, {data}${!isJS ? `: {data: Create${name}Input}`: ''}, context${!isJS ? `: object` : ''}) {
+            Object.setPrototypeOf(data, {})
+            return await context.repositories['${name}'].save(data)
         },
         ${isJS ? createdoc(name): ''}
         async update${name}(root${!isJS ? ': object' : ''}, {data}${!isJS ? `: {data: Update${name}Input}` : ''}) {
+            Object.setPrototypeOf(data, {})
             return await getConnection()
                             .createQueryBuilder()
                             .update(${name})
                             .set(data)
                             .execute()
+        },
+        
+        async delete${name}(root, {id}, context) {
+            const result = await context.repositories['${name}'].delete(id)
+            return id
         },`
 /**
+ *      
  *  @function
  *  @param {Object.<string, Type | Enum>} types
  *  @return {string}
@@ -50,7 +54,7 @@ export default (
     }) =>
 
 `
-import {getConnection} from 'typeorm'
+import {getConnection, getRepository} from 'typeorm'
 ${Object.keys(getEntities(types))
     .map(typeKey => `import {${typeKey}} from './${typeKey}'`).join('\n')
 }

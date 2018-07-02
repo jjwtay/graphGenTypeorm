@@ -1,5 +1,5 @@
 /// <reference path="../../node_modules/graphschematojson/src/types.d.ts"/>
-import { getIdKey, getId } from '../entity'
+import { getIdKey, getId, getEntities } from '../entity'
 
 /**
  * 
@@ -19,13 +19,13 @@ export const createQueries = (name, entity) =>
     ${lowerFirst(name)}(${getIdKey(entity.fields)}: ${getId(entity.fields).type }) : ${name}
 `
 /**
- * @param {Object.<string, Type>} entities
+ * @param {Object.<string, Type | Enum>} entities
  * @returns {string}
  */
 export default (entities) =>
 
 `
 type Query {
-${Object.keys(entities).map(entityKey => createQueries(entityKey, entities[entityKey])).join('\n')}
+${Object.keys(getEntities(entities)).map(entityKey => createQueries(entityKey, entities[entityKey])).join('\n')}
 }
 `

@@ -2,9 +2,9 @@
 
 type Author @Entity {
     id: Int! @PrimaryGeneratedColumn
-    first: String! @Column
-    last: String! @Column
-    books: [Book] @ManyToMany(type: "type => Book", map: "book => book.authors") 
+    first: String! @Column(type: "varchar")
+    last: String! @Column(type: "varchar")
+    books: [Book] @ManyToMany(type: "type => Book", map: "book => book.authors") @JoinColumn
 }
 
 enum BookType @EntityEnum {
@@ -14,16 +14,21 @@ enum BookType @EntityEnum {
 
 type Book @Entity {
     id: Int! @PrimaryGeneratedColumn
-    title: String! @Column
+    title: String! @Column(type: "varchar")
     authors: [Author] @ManyToMany(type: "type => Author", map: "author => author.books")
     publisher: Publisher @ManyToOne(type: "type => Publisher", map: "publisher => publisher.books")
-    description: String @Column
-    type: BookType @Column
+    description: String @Column(type: "varchar")
+    type: BookType @Column(type: "varchar")
 }
 
 type Publisher @Entity {
     id: Int! @PrimaryGeneratedColumn
-    name: String! @Column
+    name: String! @Column(type: "varchar")
     books: [Book] @OneToMany(type: "type => Book", map: "book => book.publisher")
+}
+
+type Restaurant @Entity {
+    id: Int! @PrimaryGeneratedColumn
+    name: String! @Column
 }
 
