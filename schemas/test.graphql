@@ -4,7 +4,7 @@ type Author @Entity {
     id: Int! @PrimaryGeneratedColumn
     first: String! @Column(type: "varchar")
     last: String! @Column(type: "varchar")
-    books: [Book] @ManyToMany(type: "type => Book", map: "book => book.authors") @JoinColumn
+    books: [Book] @ManyToMany(inverseSide: "authors") @JoinColumn
 }
 
 enum BookType @EntityEnum {
@@ -15,8 +15,8 @@ enum BookType @EntityEnum {
 type Book @Entity {
     id: Int! @PrimaryGeneratedColumn
     title: String! @Column(type: "varchar")
-    authors: [Author] @ManyToMany(type: "type => Author", map: "author => author.books")
-    publisher: Publisher @ManyToOne(type: "type => Publisher", map: "publisher => publisher.books")
+    authors: [Author] @ManyToMany(inverseSide: "books")
+    publisher: Publisher @ManyToOne(inverseSide: "books")
     description: String @Column(type: "varchar")
     type: BookType @Column(type: "varchar")
 }
@@ -24,11 +24,17 @@ type Book @Entity {
 type Publisher @Entity {
     id: Int! @PrimaryGeneratedColumn
     name: String! @Column(type: "varchar")
-    books: [Book] @OneToMany(type: "type => Book", map: "book => book.publisher")
+    books: [Book] @OneToMany(inverseSide: "publisher")
 }
 
 type Restaurant @Entity {
     id: Int! @PrimaryGeneratedColumn
     name: String! @Column
+}
+
+type Fruit @Entity {
+    id: Int! @PrimaryGeneratedColumn
+    name: String! @Column
+    color: String @Column
 }
 

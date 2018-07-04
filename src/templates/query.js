@@ -1,4 +1,5 @@
 /// <reference path="../../node_modules/graphschematojson/src/types.d.ts"/>
+
 import { getIdKey, getId, getEntities } from '../entity'
 
 /**
