@@ -54,7 +54,7 @@ Library requires:
     writeFileSync(`./generated/query.graphql`, queryTemplate(jsSchema))
     writeFileSync(`./generated/mutation.graphql`, mutationTemplate(jsSchema))
 
-*Create TypeORM instance with generated Entities. Example using graphql-yoga*
+*Create TypeORM instance with generated Entities. Example using [graphql-yoga](https://github.com/prismagraphql/graphql-yoga)*
 
     import { createConnection, EntitySchema } from 'typeorm
     import { getQueryResolvers, getMutationResolvers, getRepositories,  getEntitySchemas } from 'graphgentypeorm'
