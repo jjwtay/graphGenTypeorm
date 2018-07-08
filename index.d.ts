@@ -1,8 +1,7 @@
 /// <reference types="graphschematojson"/>
 
-import { Repository } from 'typeorm'
-import { Connection } from 'typeorm'
-import { EntitySchemaOptions } from "typeorm/entity-schema/EntitySchemaOptions";
+import { Connection, Repository } from 'typeorm'
+import { EntitySchemaOptions } from 'typeorm/entity-schema/EntitySchemaOptions'
 import { SchemaDirectiveVisitor } from 'apollo-server'
 
 type Resolver = (root: any, args: any, context: any, info: any) => any

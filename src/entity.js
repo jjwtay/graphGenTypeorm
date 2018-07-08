@@ -2,7 +2,8 @@
 
 import * as consts from './consts'
 import { cond, curry, F, filter, ifElse, path, pathOr, pipe, prop, T } from 'ramda'
-import { Connection, Repository, EntitySchemaOptions } from 'typeorm'
+import { Connection, Repository } from 'typeorm'
+import { EntitySchemaOptions } from 'typeorm/entity-schema/EntitySchemaOptions'
 
 /**
  * 
