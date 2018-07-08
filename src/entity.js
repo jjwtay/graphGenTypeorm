@@ -1,8 +1,7 @@
-/// <reference path="../node_modules/graphschematojson/src/types.d.ts"/>
+/// <reference types="graphschematojson"/>
 
 import * as consts from './consts'
 import { cond, curry, F, filter, ifElse, path, pathOr, pipe, prop, T } from 'ramda'
-import { JSSchema } from 'graphschematojson'
 import { Connection, Repository, EntitySchemaOptions } from 'typeorm'
 
 /**
