@@ -1,8 +1,9 @@
 /// <reference path="../node_modules/graphschematojson/src/types.d.ts"/>
-/// <reference path="./types.d.ts"/>
 
 import * as consts from './consts'
 import { cond, curry, F, filter, ifElse, path, pathOr, pipe, prop, T } from 'ramda'
+import { JSSchema } from 'graphschematojson'
+import { Connection, Repository, EntitySchemaOptions } from 'typeorm'
 
 /**
  * 
@@ -55,6 +56,11 @@ export const getId = (fields) =>
  */
 export const lowerFirst = (str) => str.charAt(0).toLowerCase() + str.slice(1)
 
+/**
+ *
+ * @param {JSSchema} schema
+ * @returns {QueryResolvers}
+ */
 export const getQueryResolvers = (schema) => ({
     Query: Object.keys(getEntities(schema)).reduce((queries, entityName) => ({
         ...queries,
@@ -66,7 +72,11 @@ export const getQueryResolvers = (schema) => ({
         }
     }), {})
 })
-
+/**
+ *
+ * @param {JSSchema} schema
+ * @returns {MutationResolvers}
+ */
 export const getMutationResolvers = (schema) => ({
     Mutation: Object.keys(getEntities(schema)).reduce((mutations, entityName) => ({
         ...mutations,
@@ -217,7 +227,7 @@ export const getColumns = pipe(
 
 /**
  * @param {string} name
- * @param {Type} type 
+ * @param {Type} type
  */
 export const getEntitySchema = (name, type) => ({
     name,
@@ -251,13 +261,22 @@ export const getEntitySchema = (name, type) => ({
             }
     }, {})
 })
-
+/**
+ *
+ * @param {{schema: JSSchema, connection: Connection}} param0
+ * @returns {{[key: string]: Repository<any>}}
+ */
 export const getRepositories = ({schema, connection}) =>
     Object.keys(getEntities(schema)).reduce((repositories, entityName) => ({
         ...repositories,
         [entityName]: connection.getRepository(entityName)
     }), {})
 
+/**
+ *
+ * @param {JSSchema} schema
+ * @return {EntitySchemaOptions[]}
+ */
 export const getEntitySchemas = (schema) =>
     Object.keys(getEntities(schema)).map((entityKey) =>
         getEntitySchema(entityKey, schema[entityKey]), [])
