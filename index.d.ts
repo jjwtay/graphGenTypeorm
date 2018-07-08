@@ -1,4 +1,4 @@
-import { JSSchema } from "graphschematojson"
+import { JSSchema } from 'graphschematojson'
 import { Repository } from 'typeorm'
 import { Connection } from 'typeorm'
 import { EntitySchemaOptions } from "typeorm/entity-schema/EntitySchemaOptions";
