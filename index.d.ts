@@ -1,4 +1,5 @@
-import { JSSchema } from 'graphschematojson'
+/// <reference types="graphschematojson"/>
+
 import { Repository } from 'typeorm'
 import { Connection } from 'typeorm'
 import { EntitySchemaOptions } from "typeorm/entity-schema/EntitySchemaOptions";
@@ -23,7 +24,7 @@ type GetRepositoriesObj = {
     connection: Connection
 }
 
-declare function queryTemplate(schema: JSSchema) : string
+declare function queryTemplate(schema: Types) : string
 
 declare function mutationTemplate(schema: JSSchema) : string
 
