@@ -12,6 +12,10 @@ Library requires:
 
 *Example graphql file usage*
 
+    # import Entity, PrimaryGeneratedColumn, ManyToMany, ManyToOne, OneToMany, EntityEnum, Column from 'graphgentypeorm/src/typeorm.graphql'
+    # optional graphql-import of all typeorm directives
+    # alternatively you can just combine the files and not use graphql-import
+
     type Author @Entity {
         id: Int! @PrimaryGeneratedColumn
         name: String! @Column({type: "varchar"})
