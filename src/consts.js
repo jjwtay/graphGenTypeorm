@@ -1,5 +1,6 @@
 export const COLUMN = 'Column'
 export const ENTITY = 'Entity'
+export const GENERATED = 'generated'
 export const JOIN_COLUMN = 'JoinColumn'
 export const MANY_TO_MANY = 'ManyToMany'
 export const MANY_TO_ONE = 'ManyToOne'

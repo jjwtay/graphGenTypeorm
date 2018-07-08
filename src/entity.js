@@ -2,6 +2,7 @@
 /// <reference path="./types.d.ts"/>
 
 import * as consts from './consts'
+import { cond, curry, F, filter, ifElse, path, pathOr, pipe, prop, T } from 'ramda'
 
 /**
  * 
@@ -75,11 +76,17 @@ export const getMutationResolvers = (schema) => ({
             const obj = repository.create(data)
             return await repository.save(obj)
         },
-        async [`update${entityName}`](root, {data}, context) {
+        async [`update${entityName}`](root, {data: {id, ...updates}}, context) {
             const repository = context.repositories[entityName]
-            const obj = await repository.findOne(data.id)
-            const updated = await repository.save(Object.assign(obj, data))
-            return await repository.findOne(data.id)
+            const obj = await repository.findOne(id)
+            //Object.setPrototypeOf(updates, {})
+            for (const key in updates) {
+                Object.setPrototypeOf(updates[key], {})
+                obj[key] = updates[key]
+            }
+            //const updated = await repository.save(Object.assign(obj, data))
+            const foo = await repository.save(obj)
+            return await repository.findOne(id)
         },
         async [`delete${entityName}`](root, {id}, context) {
             const result = await context.repositories[entityName].delete(id)
@@ -129,7 +136,9 @@ export const getType = field => {
     return typeMap[field.type] ? typeMap[field.type]: 'varchar'
 }
 
-export const getColumns = (type) =>
+
+
+/*export const getColumns = (type) =>
     Object.keys(type.fields).reduce((fields, fieldName) => {
         if (type.fields[fieldName].directives.hasOwnProperty(consts.PRIMARY_GENERATED_COLUMN)) {
             return {...fields, [fieldName]: type.fields[fieldName]}
@@ -138,7 +147,9 @@ export const getColumns = (type) =>
         }
 
         return fields
-    }, {})
+    }, {})*/
+
+
 
 export const getRelColumns = (type) =>
     Object.keys(type.fields).reduce((fields, fieldName) => {
@@ -153,20 +164,75 @@ export const getRelColumns = (type) =>
         }
         return fields
     }, {})
+
+/** @type {function(string, Type) => Field} */
+export const getField = curry((fieldName, type) => type.fields[fieldName])
+
+/** @type {function(Field) => boolean} */
+export const fieldIsPrimary = ifElse(
+    path(['directives', consts.PRIMARY_GENERATED_COLUMN]),
+    T,
+    F
+)
+
+/** @type {function(Field) => boolean} */
+export const fieldIsNullable = prop('isNullable')
+
+/** @type {function(Field) => boolean} */
+export const fieldIsGenerated = ifElse(
+    fieldIsPrimary,
+    T,
+    ifElse(
+        path(['directives', consts.GENERATED]),
+        T,
+        F
+    )
+)
+
+/** @type {function(string, Type) => boolean} */
+export const isPrimary = pipe(
+    getField,
+    fieldIsPrimary
+)
+/** @type {function(string, Type) => boolean} */
+export const isGenerated = pipe(
+    getField,
+    fieldIsGenerated
+)
+/** @type {function(string, Type) => boolean} */
+export const isNullable = pipe(
+    getField,
+    fieldIsNullable
+)
+
+/** @type {function(Type) => {[key: string]: Field}} */
+export const getColumns = pipe(
+    path(['fields']),
+    filter(cond([
+        [fieldIsPrimary, T],
+        [path(['directives', consts.COLUMN]), T],
+        [F, F]
+    ]))
+)
+
 /**
  * @param {string} name
  * @param {Type} type 
  */
 export const getEntitySchema = (name, type) => ({
     name,
-    columns: Object.keys(getColumns(type)).reduce((columns, fieldName) => ({
+    columns: Object.keys(getColumns(type)).reduce((columns, fieldName) => {
+
+        return ({
         ...columns,
         [fieldName]: {
-            primary: type.fields[fieldName].directives.hasOwnProperty(consts.PRIMARY_GENERATED_COLUMN) ? true : false,
+            ...type.fields[fieldName].directives,
+            primary: isPrimary(fieldName, type),
             type: getType(type.fields[fieldName]),
-            generated: type.fields[fieldName].directives.hasOwnProperty(consts.PRIMARY_GENERATED_COLUMN) ? true : false,
+            generated: isGenerated(fieldName, type),
+            nullable: isNullable(fieldName, type)
         }
-    }) , {}),
+    })} , {}),
     relations: Object.keys(getRelColumns(type)).reduce((relationships, fieldName) => {
         const relType = getRelType(type.fields[fieldName])
         const relDirectiveKey = getKeyByValue(relType, relMap)
