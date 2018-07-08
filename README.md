@@ -83,7 +83,7 @@ Library requires:
                 repositories: getRepositories({schema: jsSchema, connection}),
                 connection
             },
-            /** Must add if using relationships in schema.graphql.
+            /** Must add if using relationships in schema.graphql. */
             schemaDirectives: {
                 OneToOne,
                 OneToMany,
@@ -94,3 +94,12 @@ Library requires:
         })
         server.start(() => console.log('Server is running on localhost:4000'))
     })
+
+
+# TODO (tons)
+
++ Add directives for type checking (email, url, regex, ...)
++ unit-testing
++ clean up messy code (most of it)
++ make export resolvers template for migration away when user wants.
++ Add protected directives for fields that should be removed from input generation and have separate input generation(not sure on this)
