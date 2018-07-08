@@ -98,6 +98,7 @@ Library requires:
 
 # TODO (tons)
 
++ Improve input get all query to support filter/sort/limit/...
 + Add directives for type checking (email, url, regex, ...)
 + unit-testing
 + clean up messy code (most of it)
