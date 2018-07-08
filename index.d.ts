@@ -2,7 +2,7 @@ import { JSSchema } from "graphschematojson"
 import { Repository } from 'typeorm'
 import { Connection } from 'typeorm'
 import { EntitySchemaOptions } from "typeorm/entity-schema/EntitySchemaOptions";
-
+import { SchemaDirectiveVisitor } from 'apollo-server'
 
 type Resolver = (root: any, args: any, context: any, info: any) => any
 
@@ -36,3 +36,11 @@ declare function getRepositories(arg: GetRepositoriesObj) : {
 }
 
 declare function getEntitySchemas(schema: JSSchema) : EntitySchemaOptions<any>[]
+
+declare class OneToOne extends SchemaDirectiveVisitor {}
+
+declare class OneToMany extends SchemaDirectiveVisitor {}
+
+declare class ManyToOne extends SchemaDirectiveVisitor {}
+
+declare class ManyToMany extends SchemaDirectiveVisitor {}

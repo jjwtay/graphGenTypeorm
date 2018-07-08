@@ -8,6 +8,30 @@ Library requires:
 + [GraphSchemaToJSON](https://github.com/jjwtay/graphSchemaToJson)
 + [GraphQL Import](https://github.com/prismagraphql/graphql-import) Optional
 
+
+
+*Example graphql file usage*
+
+    type Author @Entity {
+        id: Int! @PrimaryGeneratedColumn
+        name: String! @Column({type: "varchar"})
+        books: [Book] @ManyToMany(inverseSide: "authors") @JoinColumn
+    }
+
+    type Book @Entity {
+        id: Int! @PrimaryGeneratedColumn
+        title: String! @Column({type: "varchar"})
+        description: String @Column({type: "varchar"})
+        authors: [Author] @ManyToMany(inverseSide: "books")
+        publisher: Publisher @ManyToOne(inverseSide: "books")
+    }
+
+    type Publisher @Entity {
+        id: Int! @PrimaryGeneratedColumn
+        name: String! @Column({type: "varchar"})
+        books: @OneToMany(inverseSide: "publisher")
+    }
+
 *Create graphql Query and Mutation graphql files*
 
     import { schemaToJS } from 'graphschematojson'
