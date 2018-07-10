@@ -229,8 +229,10 @@ export const getColumns = pipe(
  * @param {string} name
  * @param {Type} type
  */
-export const getEntitySchema = (name, type) => ({
-    name,
+export const getEntitySchema = (name, type) => {
+    console.log(name, type.directives.Entity.name)
+    return ({
+    name: type.directives.Entity.name || name,
     columns: Object.keys(getColumns(type)).reduce((columns, fieldName) => {
 
         return ({
@@ -259,8 +261,12 @@ export const getEntitySchema = (name, type) => ({
                     lazy: true,
                 }
             }
-    }, {})
+    }, {}),
+    uniques: type.directives.Entity.uniques || [],
+    checks: type.directives.Entity.checks || [],
+    indices: type.directives.Entity.indices || []
 })
+}
 /**
  *
  * @param {{schema: JSSchema, connection: Connection}} param0

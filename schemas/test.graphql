@@ -12,7 +12,12 @@ enum BookType @EntityEnum {
     NonFiction
 }
 
-type Book @Entity {
+type Book @Entity(
+    uniques: [{
+        name: "title_publisher",
+        columns: ["title", "publisher"]
+    }] 
+) {
     id: Int! @PrimaryGeneratedColumn
     title: String! @Column(type: "varchar")
     authors: [Author] @ManyToMany(inverseSide: "books")
@@ -30,11 +35,5 @@ type Publisher @Entity {
 type Restaurant @Entity {
     id: Int! @PrimaryGeneratedColumn
     name: String! @Column
-}
-
-type Fruit @Entity {
-    id: Int! @PrimaryGeneratedColumn
-    name: String! @Column
-    color: String @Column
 }
 
