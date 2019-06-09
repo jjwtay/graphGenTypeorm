@@ -1,9 +1,14 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "lib": ["dom"],
+        "target": "es5",
         "module": "commonjs",
-        "sourceMap": true,
-        "experimentalDecorators": true,
-        "allowJs": true
-    }
+        "declaration": true,
+        "declarationDir": "./dist",
+        "outDir": "./dist",
+        "strict": true,
+        "esModuleInterop": true
+      },
+    "include": ["src"],
+    "exclude": ["tests", "node_modules"]
 }

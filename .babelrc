@@ -1,4 +1,0 @@
-{
-
-  "plugins": ["babel-polyfill", "transform-class-properties", "transform-decorators-legacy", "transform-object-rest-spread"]
-}

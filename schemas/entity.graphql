@@ -1,0 +1,16 @@
+directive @Entity(
+    # Entity name. If not present default graphql type name will be used.
+    name: String
+
+    # Table name.
+    tableName: String
+
+    # Database name. Used in MySql and Sql Server.
+    database: String
+
+    # Schema name. Used in Postgres and Sql Server.
+    schema: String
+
+    # Autoupdates database based on entity changes. For development.
+    synchronize: Boolean
+) on OBJECT

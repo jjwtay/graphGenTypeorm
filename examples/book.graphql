@@ -1,0 +1,6 @@
+type Book @Entity {
+    id: Int! @Column(type: "int", primary: true, generated: true)
+    title: String! @Column(type: "string")
+    Author: [Author]! @Relationship(type: "many-to-one", target: "Author")
+    name: String!
+}
