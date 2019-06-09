@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'fs'
 import prettier from 'prettier'
 import { toTS, toJS } from './templates/model'
