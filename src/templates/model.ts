@@ -13,7 +13,7 @@ export const toImports: (schema: EntitySchemaOptions<{}>) => string =  R.pipe(
 
 export const toJS = <T>(entitySchema: EntitySchemaOptions<T>) => `
 import { EntitySchema } from 'typeorm'
-import { createQuery } from 'graphql_typeorm/query'
+import { createQuery } from 'graphql_typeorm/dist/query'
 
 ${toTypesJS(entitySchema)}
 
@@ -25,7 +25,7 @@ ${toResolversJS(entitySchema)}
 
 export const toTS = <T>(entitySchema: EntitySchemaOptions<T>) => `
 import { EntitySchema }  from 'typeorm'
-import { QueryArgs, createQuery } from 'graphql_typeorm/query'
+import { QueryArgs, createQuery } from 'graphql_typeorm/dist/query'
 ${toImports(entitySchema)}
 
 ${toTypesTS(entitySchema)}
