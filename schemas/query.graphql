@@ -1,0 +1,63 @@
+union Number = Int | Float
+
+union BasicType = String | Number
+
+type EqualsString {
+    $eq: String!
+}
+
+type EqualsNumber {
+    $eq: Number!
+}
+
+union Equals = EqualsString | EqualsNumber
+
+type GreaterThan {
+    $gt: Number!
+}
+
+type GreaterThanOrEqual {
+    $gte: Number!
+}
+
+type InString {
+    $in: String[]!
+}
+
+type InNumber {
+    $in: Number!
+}
+
+union In = InString | InNumber
+
+type LessThan {
+    $lt: Number!
+}
+
+type LessThanOrEqual {
+    $lte: Number!
+}
+
+type NotEqualString {
+    $ne: String!
+}
+
+type NotEqualNumber {
+    $ne: String!
+}
+
+union NotEqual = NotEqualString | NotEqualNumber
+
+type NotInString {
+    $nin: String[]!
+}
+
+type NotInNumber {
+    $nin: Number[]!
+}
+
+union NotIn = NotInString | NotInNumber
+
+union FieldQueryString = String | EqualsString | InString | NotEqualString | NotInString
+
+union NumberQueryString = Number | EqualsNumber | GreaterThan | GreaterThanOrEqual | InNumber | LessThan | LessThanOrEqual | NotEqualNumber | NotInNumber

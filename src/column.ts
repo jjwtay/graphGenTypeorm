@@ -3,9 +3,11 @@ import { ObjectSchema } from 'graphschematojson/dist/object'
 import * as R from 'ramda'
 import { COLUMN, PRIMARY_GENERATED_COLUMN } from './consts'
 
-export const isPrimary = (obj: any) => {
-    return R.propOr(false, 'primary')
-}
+export const isPrimary: (obj: EntitySchemaColumnOptions) => boolean = R.propOr(false, 'primary')
+
+export const isGenerated:(obj: EntitySchemaColumnOptions) => boolean = R.propOr(false, 'generated')
+
+export const isNullable: (obj: EntitySchemaColumnOptions) => boolean = R.propOr(false, 'nullable')
 
 export const columnToSchemaField = (schema: any) => {
     return R.path(['directives', COLUMN ], schema)
@@ -14,7 +16,8 @@ export const columnToSchemaField = (schema: any) => {
 export const getType = (type: string) => {
     const types: { [key: string]: string } = {
         Int: 'int',
-        String: 'string'
+        Float: 'float',
+        String: 'varchar'
     }
 
     return types[type] || 'unknown'

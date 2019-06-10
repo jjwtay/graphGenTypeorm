@@ -25,6 +25,7 @@ ${toResolversJS(entitySchema)}
 
 export const toTS = <T>(entitySchema: EntitySchemaOptions<T>) => `
 import { EntitySchema }  from 'typeorm'
+import { Context } from '../context'
 import { QueryArgs, createQuery } from 'graphql_typeorm/dist/query'
 ${toImports(entitySchema)}
 

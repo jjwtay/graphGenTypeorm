@@ -6,7 +6,8 @@ import { EntitySchemaColumnOptions } from 'typeorm/entity-schema/EntitySchemaCol
 export const getType = (type: string): string => {
     const map: { [key: string]: string } = {
         int: 'number',
-        string: 'string'
+        string: 'string',
+        float: 'number'
     }
 
     return map[type] || ''
