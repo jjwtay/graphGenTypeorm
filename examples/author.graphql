@@ -2,5 +2,5 @@ type Author @Entity {
     id: Int! @PrimaryGeneratedColumn
     name: String! @Column
     rating: Float @Column(type: "float")
-    Books: [Book] @Relationship(type: "one-to-many", target: "Book")
+    books: [Book] @Relationship(type: "one-to-many", target: "Book")
 }

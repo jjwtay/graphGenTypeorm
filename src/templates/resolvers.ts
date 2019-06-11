@@ -29,9 +29,8 @@ export const toJS = <T>(entitySchema: EntitySchemaOptions<T>) => `
 export const Resolvers = {
     Query:  {
         /** @type { (parent: any, args: { id: string | number }, context: Context) => Promise<${entitySchema.name}> } */
-        ${lowerFirst(entitySchema.name)}: async (parent, args, context) => {
-            await context.connection.getRepository(Model).findOne(args.id)
-        }
+        ${lowerFirst(entitySchema.name)}: async (parent, args, context) =>
+            await context.connection.getRepository(Model).findOne(args.id),
 
         /** @type { (parent: any, args: { data: QueryArgs<${entitySchema.name}> }, context: Context) => Promise<${entitySchema.name}[]> } */
         ${lowerFirst(entitySchema.name + 's')}: async (parent, args, context) =>
