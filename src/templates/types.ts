@@ -7,7 +7,8 @@ export const getType = (type: string): string => {
     const map: { [key: string]: string } = {
         int: 'number',
         string: 'string',
-        float: 'number'
+        float: 'number',
+        varchar: 'string'
     }
 
     return map[type] || ''
