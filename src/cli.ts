@@ -93,7 +93,7 @@ R.pipe(
 
             const typeFile = R.pipe<
                 typeof types,
-                { [key: string]: string },
+                Record<string, string>,
                 string[],
                 string
             > (

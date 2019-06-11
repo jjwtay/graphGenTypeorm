@@ -2,8 +2,9 @@ import * as R from 'ramda'
 import { RELATIONSHIP } from './consts'
 import { EntitySchemaRelationOptions } from 'typeorm'
 import { ObjectSchema } from 'graphschematojson/dist/object'
+import { FieldSchema } from 'graphschematojson/dist/field'
 
-export const from = R.pipe(
+export const fromField = R.pipe(
     R.path(['directives', RELATIONSHIP]),
     R.applySpec<EntitySchemaRelationOptions>({
         type: R.prop('type'),
@@ -11,14 +12,14 @@ export const from = R.pipe(
     })
 )
 
-export const fromObject = R.mapObjIndexed((relation, name) => from(relation))
+export const fromFieldsObject = R.mapObjIndexed((relation, name) => fromField(relation))
 
-export const getRelationships: (obj: { fields: {[key: string]: ObjectSchema }}) => { [key: string]: ObjectSchema } = R.pipe(
+export const getRelationships = R.pipe<ObjectSchema, Record<string,FieldSchema>, Record<string, FieldSchema>>(
     R.prop('fields'),
-    R.filter(R.where({ directives: R.has(RELATIONSHIP) }))
+    R.pickBy(R.where({ directives: R.has(RELATIONSHIP) }))
 )
 
 export const fromTypes = R.pipe(
     getRelationships,
-    fromObject
+    fromFieldsObject
 )

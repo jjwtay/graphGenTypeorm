@@ -4,7 +4,7 @@ import * as R from 'ramda'
 import { isGenerated, isNullable } from '../column'
 
 export const getGraphQLType = (type: string) => {
-    const types: { [key: string]: string } = {
+    const types: Record<string, string> = {
         string: 'String',
         int: 'Int',
         float: 'Float',
@@ -18,7 +18,7 @@ input ${entitySchema.name}Update {
     ${R.pipe<
         typeof entitySchema.columns,
         typeof entitySchema.columns,
-        { [key: string]: string },
+        Record<string, string>,
         string[],
         string
     > (
@@ -35,7 +35,7 @@ input ${entitySchema.name}Create {
     ${R.pipe<
         typeof entitySchema.columns,
         typeof entitySchema.columns,
-        { [key: string]: string },
+        Record<string, string>,
         string[],
         string
     >(
@@ -54,11 +54,11 @@ export const toGraphQLMutations = <T>(entitySchema: EntitySchemaOptions<T>) =>
         `delete${entitySchema.name}(data: ID): ID`
     ].join('\n\t')
 
-export const toGraphQL = (types: { [key: string]: EntitySchemaOptions<{}>}) => `
+export const toGraphQL = (types: Record<string, EntitySchemaOptions<{}>>) => `
 ${R.pipe<
     typeof types,
-    { [key: string]: [string, string]},
-    { [key: string]: string },
+    Record<string, [string, string]>,
+    Record<string, string>,
     string[],
     string
     > (
@@ -73,7 +73,7 @@ ${R.pipe<
 )(types)}
 
 type Mutation {
-    ${R.pipe<typeof types, { [key: string]: string }, string[], string> (
+    ${R.pipe<typeof types, Record<string, string>, string[], string> (
         R.mapObjIndexed((entitySchema: EntitySchemaOptions<{}>, name) => 
             toGraphQLMutations(entitySchema)
         ),

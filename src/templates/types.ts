@@ -4,7 +4,7 @@ import { EntitySchemaRelationOptions } from 'typeorm/entity-schema/EntitySchemaR
 import { EntitySchemaColumnOptions } from 'typeorm/entity-schema/EntitySchemaColumnOptions'
 
 export const getType = (type: string): string => {
-    const map: { [key: string]: string } = {
+    const map: Record<string, string> = {
         int: 'number',
         string: 'string',
         float: 'number',
@@ -19,11 +19,11 @@ export const getRelationshipType = (relationship: EntitySchemaRelationOptions) =
 }
 
 export const relationshipToTypeField = (relationship: EntitySchemaRelationOptions, name: string) => {
-    return `${name}: ${getRelationshipType(relationship)}`
+    return `${name}${relationship.nullable ? '?': ''}: ${getRelationshipType(relationship)}`
 }
 
 export const columnToTypeField = (column: EntitySchemaColumnOptions, name: string) => {
-    return `${name}: ${getType(column.type as string)};`
+    return `${name}${column.nullable ?  '?': ''}: ${getType(column.type as string)};`
 }
 
 export const toTS = (entitySchema: EntitySchemaOptions<{}>) => `export interface ${entitySchema.name} {

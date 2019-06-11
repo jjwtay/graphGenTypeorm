@@ -4,7 +4,7 @@ import { lowerFirst } from './resolvers'
 import * as R from 'ramda'
 
 export const getColumnType = (column: EntitySchemaColumnOptions) => {
-    const types: { [key: string]: string } = {
+    const types: Record<string, string> = {
         string: 'FieldQueryString',
         int: 'FieldQueryNumber'
     }
@@ -16,7 +16,7 @@ export const columnToGraphQL = (column: EntitySchemaColumnOptions, name: string)
 
 export const toGraphQLWhere = <T>(entitySchema: EntitySchemaOptions<T>) => `
 type ${entitySchema.name}Where {
-    ${R.pipe<typeof entitySchema.columns, { [key: string]: string }, string[], string> (
+    ${R.pipe<typeof entitySchema.columns, Record<string,string>, string[], string> (
         R.mapObjIndexed((column: EntitySchemaColumnOptions, name) => columnToGraphQL(column, name)),
         R.values,
         R.join('\n\t')
@@ -45,7 +45,7 @@ export const toGraphQLQueries = <T>(entitySchema: EntitySchemaOptions<T>) =>
         `${lowerFirst(entitySchema.name)}s(data: ${entitySchema.name}Query): [${entitySchema.name}]`
     ].join('\n\t')
 
-export const toGraphQL = (types: { [key: string]: EntitySchemaOptions<{}>}) => `
+export const toGraphQL = (types: Record<string, EntitySchemaOptions<{}>>) => `
 type Order {
     name: String!
     id: String!
@@ -53,8 +53,8 @@ type Order {
 
 ${R.pipe<
     typeof types,
-    { [key: string]: [string, string]},
-    { [key: string]: string },
+    Record<string, [string, string]>,
+    Record<string, string>,
     string[],
     string
     > (
@@ -68,7 +68,7 @@ ${R.pipe<
 )(types)}
 
 type Query {
-    ${R.pipe<typeof types, { [key: string]: string }, string[], string> (
+    ${R.pipe<typeof types, Record<string, string>, string[], string> (
         R.mapObjIndexed((entitySchema: EntitySchemaOptions<{}>, name) => 
             toGraphQLQueries(entitySchema)
         ),
