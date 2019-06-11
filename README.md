@@ -22,10 +22,10 @@ Automatically create TypeORM EntitySchema's, GraphQL resolvers, GraphQL Mutation
 # Directives
 | Name                    | Options | Description |
 |-------------------------|---------|-------------|
-| @Entity                 | [EntitySchemaOptions](https://github.com/typeorm/typeorm/blob/master/src/entity-schema/EntitySchemaOptions.ts)| Determines what GraphQL Types get converted to TypeORM EntitySchema Models.|
-| @Column                 | [EntitySchemaColumnOptions](https://github.com/typeorm/typeorm/blob/master/src/entity-schema/EntitySchemaColumnOptions.ts)| Determines what model fields are stored in database.|
+| @Entity                 | [EntitySchemaOptions](https://github.com/jjwtay/graphGenTypeorm/blob/master/schemas/entity.graphql)| Determines what GraphQL Types get converted to TypeORM EntitySchema Models.|
+| @Column                 | [EntitySchemaColumnOptions](https://github.com/jjwtay/graphGenTypeorm/blob/master/schemas/column.graphql)| Determines what model fields are stored in database.|
 | @Relationship           | [EntitySchemaRelationshipOptions](https://github.com/typeorm/typeorm/blob/master/src/entity-schema/EntitySchemaRelationOptions.ts)| Determines that a relationship field should be created.|
-| @PrimaryGeneratedColumn | [EntitySchemaColumnOptions](https://github.com/typeorm/typeorm/blob/master/src/entity-schema/EntitySchemaColumnOptions.ts)| Shortcut for Column type with primary = true and generated = true| 
+| @PrimaryGeneratedColumn | [EntitySchemaColumnOptions](https://github.com/jjwtay/graphGenTypeorm/blob/master/schemas/column.graphql)| Shortcut for Column type with primary = true and generated = true| 
 
 # Example usage CLI
     npx graphql_typeorm dir=./schemas outDir=./generated
@@ -45,3 +45,7 @@ See src/cli.ts
 Run this command and check newly generated ./generated directory.
 
     npx graphql_typeorm dir=./node_modules/graphql_typeorm/examples outDir=./generated
+
+# TODO
+- Handle resolvers as normal vs connections. (Naming convention? New directive? Either?)
+- Finish adding/handling EntitySchemaOptions (indices, etc...)
