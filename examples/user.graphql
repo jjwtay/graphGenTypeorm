@@ -1,4 +1,6 @@
 type User @Entity {
     first: String! @PrimaryColumn
     last: String! @PrimaryColumn
+    createdAt: Date @CreateDateColumn
+    updatedAt: Date @UpdateDateColumn(type: "timestamp")
 }

@@ -17,6 +17,7 @@ interface Config {
     file?: string
     dir?: string
     format: 'ts' | 'js'
+    contextPath: string
 }
 
 interface CliArgs extends Config {
@@ -30,7 +31,7 @@ const getArgs = R.reduce<string, CliArgs>((acc, arg: string) => {
         return R.assoc(split[0], split[1], acc)
     }
     return acc
-}, { format: 'ts', outDir: './generated' })
+}, { format: 'ts', outDir: './generated', contextPath: '../context'})
 
 const mergeConfig = (args: CliArgs) => {
     if (args.config) {
@@ -71,7 +72,7 @@ R.pipe(
         if (config.format === 'ts') {
             // generate ts models
             R.mapObjIndexed((entity, name) => {
-                writeFileSync(`${config.outDir}/models/${name}.ts`, prettier.format(toTS(entity), {
+                writeFileSync(`${config.outDir}/models/${name}.ts`, prettier.format(toTS(entity, config.contextPath), {
                     singleQuote: true,
                     printWidth: 100,
                     tabWidth: 4,
@@ -83,7 +84,7 @@ R.pipe(
         } else if (config.format === 'js') {
             // generate js models
             R.mapObjIndexed((entity, name) => {
-                writeFileSync(`${config.outDir}/models/${name}.js`, prettier.format(toJS(entity), {
+                writeFileSync(`${config.outDir}/models/${name}.js`, prettier.format(toJS(entity, config.contextPath), {
                     singleQuote: true,
                     printWidth: 100,
                     tabWidth: 4,
@@ -121,12 +122,14 @@ R.pipe(
 
         writeFileSync(`${config.outDir}/schemas/mutations.graphql`, mutations)
 
-        writeFileSync(`${config.outDir}/context.ts`, prettier.format(toTSContext(), {
-            singleQuote: true,
-            printWidth: 100,
-            tabWidth: 4,
-            parser: 'typescript',
-            semi: false
-        }))
+        if (!config.contextPath) {
+            writeFileSync(`${config.outDir}/context.ts`, prettier.format(toTSContext(), {
+                singleQuote: true,
+                printWidth: 100,
+                tabWidth: 4,
+                parser: 'typescript',
+                semi: false
+            }))
+        }
     }
 )(process.argv)

@@ -11,22 +11,27 @@ export const toImports: (schema: EntitySchemaOptions<{}>) => string =  R.pipe(
     R.join('\n')
 )
 
-export const toJS = <T>(entitySchema: EntitySchemaOptions<T>) => `
+export const toJS = <T>(entitySchema: EntitySchemaOptions<T>, contextPath = '../context') => `
 import { EntitySchema } from 'typeorm'
 import { createQuery } from 'graphql_typeorm/dist/query'
+import { ResolverFunction } from 'typeorm/dist'
 
 ${toTypesJS(entitySchema)}
 
 /** @type { EntitySchema<${entitySchema.name}> } */
 export const Model = new EntitySchema(${JSON.stringify(entitySchema, null, 4)})
 
+/** @typedef { import('graphql_typeorm/query').QueryArgs } QueryArgs */
+/** @typedef { import ('${contextPath}').Context } Context */
 ${toResolversJS(entitySchema)}
 `
 
-export const toTS = <T>(entitySchema: EntitySchemaOptions<T>) => `
+export const toTS = <T>(entitySchema: EntitySchemaOptions<T>, contextPath = '../context') => `
 import { EntitySchema }  from 'typeorm'
-import { Context } from '../context'
+import { Context } from '${contextPath}'
 import { QueryArgs, createQuery } from 'graphql_typeorm/dist/query'
+import { ResolverFunction  } from 'typeorm/dist'
+
 ${toImports(entitySchema)}
 
 ${toTypesTS(entitySchema)}

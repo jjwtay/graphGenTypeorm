@@ -113,3 +113,11 @@ directive @Column(
 ) on FIELD_DEFINITION
 
 directive @JoinColumn on FIELD_DEFINITION
+
+directive @PrimaryGeneratedColumn on FIELD_DEFINITION
+
+directive @PrimaryColumn on FIELD_DEFINITION
+
+directive @CreateDateColumn on FIELD_DEFINITION
+
+directive @UpdateDateColumn on FIELD_DEFINITION

@@ -2,6 +2,9 @@ import { EntitySchemaOptions } from 'typeorm/entity-schema/EntitySchemaOptions'
 import  * as R from 'ramda'
 import { EntitySchemaColumnOptions } from 'typeorm'
 import { typeOrmToTs } from '../consts'
+import resolverType from './resolverTypes'
+import findOneType from './findOneType'
+import createUpdateType from './createUpdateType'
 
 export const lowerFirst = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
 
@@ -25,48 +28,45 @@ export const getFindOneType = R.pipe<
 )
 
 export const toTS = <T>(entitySchema: EntitySchemaOptions<T>) => `
-export const Resolvers = {
+${createUpdateType(entitySchema)}
+${findOneType(entitySchema)}
+${resolverType(entitySchema.name)}
+export const Resolvers: ${entitySchema.name}Resolver = {
     Query: {
-        ${lowerFirst(entitySchema.name)}: async (parent: any, args: ${getFindOneType(entitySchema)}, context: Context) =>
-            await context.connection.getRepository(Model).findOne(args),
+        ${lowerFirst(entitySchema.name)}: (parent, args, context) =>
+            context.connection.getRepository(Model).findOne(args.input),
 
-        ${lowerFirst(entitySchema.name + 's')}: async (parent: any, args: QueryArgs<${entitySchema.name}>, context: Context) =>
-            await context.connection.getRepository(Model).find(createQuery(args))
+        ${lowerFirst(entitySchema.name + 's')}: (parent, args, context) =>
+            context.connection.getRepository(Model).find(createQuery(args))
     },
     Mutation: {
-        create${entitySchema.name}: async (parent: any, args: { data: Partial<${entitySchema.name}> }, context: Context) =>
-            await context.connection.getRepository(Model).create(args.data),
+        create${entitySchema.name}: (parent, args, context) =>
+            context.connection.getRepository(Model).save(args.input),
         
-        update${entitySchema.name}: async (parent: any, args: { data: Partial<${entitySchema.name}> }, context: Context) => {
-            const result = await context.connection.getRepository(Model).update(args.data.id, args.data) as Partial<${entitySchema.name}>
-            return await context.connection.getRepository(Model).findOne(result.id)
+        update${entitySchema.name}: async (parent, args, context) => {
+            await context.connection.getRepository(Model).update(args.id, args.patch)
+            return context.connection.getRepository(Model).findOne(args.id)
         }
     }
 }`
 
 export const toJS = <T>(entitySchema: EntitySchemaOptions<T>) => `
-/** @typedef { import('./graphql_typeorm/query').QueryArgs } QueryArgs */
-/** @typedef { import ('../context').Context } Context */
-
+/** @type { ${entitySchema.name}Resolver } */
 export const Resolvers = {
-    Query:  {
-        /** @type { (parent: any, args: ${getFindOneType(entitySchema)}, context: Context) => Promise<${entitySchema.name}> } */
-        ${lowerFirst(entitySchema.name)}: async (parent, args, context) =>
-            await context.connection.getRepository(Model).findOne(args),
+    Query: {
+        ${lowerFirst(entitySchema.name)}: (parent, args, context) =>
+            context.connection.getRepository(Model).findOne(args.input),
 
-        /** @type { (parent: any, args: { data: QueryArgs<${entitySchema.name}> }, context: Context) => Promise<${entitySchema.name}[]> } */
-        ${lowerFirst(entitySchema.name + 's')}: async (parent, args, context) =>
-            await context.connection.getRepository(Model).find(createQuery(args))
+        ${lowerFirst(entitySchema.name + 's')}: (parent, args, context) =>
+            context.connection.getRepository(Model).find(createQuery(args))
     },
     Mutation: {
-        /** @type { (parent: any, args: { data: Partial<${entitySchema.name}> }, context: Context) => Promise<${entitySchema.name}> } */
-        create${entitySchema.name}: async (parent, args, context) =>
-            await context.connection.getRepository(Model).create(args.data),
+        create${entitySchema.name}: (parent, args, context) =>
+            context.connection.getRepository(Model).save(args.input),
         
-        /** @type { (parent: any, args: { data: Partial<${entitySchema.name}> }, context: Context) => Promise<${entitySchema.name}> } */
         update${entitySchema.name}: async (parent, args, context) => {
-            const result = await context.connection.getRepository(Model).update(args.data.id, args.data)
-            return context.connection.getRepository(Model).findOne(result.id)
+            await context.connection.getRepository(Model).update(args.id, args.patch)
+            return context.connection.getRepository(Model).findOne(args.id)
         }
     }
 }`
