@@ -2,7 +2,11 @@ import { EntitySchemaColumnOptions, Entity, EntitySchema } from 'typeorm'
 import { FieldSchema } from 'graphschematojson/dist/field'
 import { ObjectSchema } from 'graphschematojson/dist/object'
 import * as R from 'ramda'
-import { COLUMN, PRIMARY_GENERATED_COLUMN } from './consts'
+import { COLUMN, PRIMARY_COLUMN, PRIMARY_GENERATED_COLUMN } from './consts'
+
+type Column = Pick<EntitySchemaColumnOptions, Exclude<keyof EntitySchemaColumnOptions, "type">> & { type?: string }
+type PrimaryColumn = Pick<Column, Exclude<keyof Column, "primary">>
+type PrimaryGeneratedColumn =  Pick<PrimaryColumn, Exclude<keyof PrimaryColumn, "generated" >>
 
 export  type ColumnField = {
     directives: {
@@ -11,9 +15,16 @@ export  type ColumnField = {
     }
 } & FieldSchema
 
+export type PrimaryGeneratedField = {
+    directives: {
+        [PRIMARY_GENERATED_COLUMN]: PrimaryGeneratedColumn
+        [key: string]: any
+    }
+} & FieldSchema
+
 export type PrimaryField = {
-    directives:  {
-        [PRIMARY_GENERATED_COLUMN]: Partial<EntitySchemaColumnOptions>
+    directives: {
+        [PRIMARY_COLUMN]: PrimaryColumn
         [key: string]: any
     }
 } & FieldSchema
@@ -23,7 +34,6 @@ export const isPrimary: (obj: EntitySchemaColumnOptions) => boolean = R.propOr(f
 export const isGenerated:(obj: EntitySchemaColumnOptions) => boolean = R.propOr(false, 'generated')
 
 export const isNullable: (obj: EntitySchemaColumnOptions) => boolean = R.propOr(false, 'nullable')
-//export const getNullable = (obj: ColumnField) => obj.isNullable
 
 export const getType = (type:  string) => {
 
@@ -48,20 +58,27 @@ export const fromColumnField = (obj: ColumnField) => ({
     nullable: getNullable(obj) || undefined
 })
 
-/** Convert a FieldSchema with Primary Directive into TypeORM EntitySchemaColumnOptions Object */
-export const fromPrimaryField = (obj: PrimaryField) => ({
+/** Convert a FieldSchema with PrimaryGeneratedColumn Directive into TypeORM EntitySchemaColumnOptions Object */
+export const fromPrimaryGeneratedField = (obj: PrimaryGeneratedField) => ({
     ...obj.directives[PRIMARY_GENERATED_COLUMN],
     type: getType(obj.type),
     primary: true,
     generated: true
 })
 
+/** Convert a FieldSchema with PrimaryColumn Directive into TypeORM EntitySchemaColumnOptions Object */
+export const fromPrimaryField = (obj: PrimaryField) => ({
+    ...obj.directives[PRIMARY_COLUMN],
+    type: getType(obj.type),
+    primary: true
+})
+
 /** Convert a FieldSchema into a TypeORM EntitySchemaColumnOptions Object. */
-export const fromField: (obj: FieldSchema) => EntitySchemaColumnOptions = R.ifElse(
-    R.pipe(R.prop('directives'), R.has(COLUMN)),
-    fromColumnField,
-    fromPrimaryField
-)
+export const fromField: (obj: FieldSchema) => EntitySchemaColumnOptions = R.cond([
+    [R.pipe(R.prop('directives'), R.has(COLUMN)), fromColumnField],
+    [R.pipe(R.prop('directives'), R.has(PRIMARY_GENERATED_COLUMN)), fromPrimaryGeneratedField],
+    [R.T, fromPrimaryField]
+])
 
 export const fromColumnsObject = R.mapObjIndexed<FieldSchema, EntitySchemaColumnOptions>((column, name) => fromField(column))
 
@@ -71,7 +88,8 @@ export const getColumns = R.pipe<ObjectSchema, Record<string, FieldSchema>, Reco
         R.where({
             directives: R.anyPass([
                 R.has(COLUMN),
-                R.has(PRIMARY_GENERATED_COLUMN)
+                R.has(PRIMARY_GENERATED_COLUMN),
+                R.has(PRIMARY_COLUMN)
             ])
         })
     )

@@ -2,17 +2,9 @@ import * as R from 'ramda'
 import { EntitySchemaOptions } from 'typeorm/entity-schema/EntitySchemaOptions'
 import { EntitySchemaRelationOptions } from 'typeorm/entity-schema/EntitySchemaRelationOptions'
 import { EntitySchemaColumnOptions } from 'typeorm/entity-schema/EntitySchemaColumnOptions'
+import { typeOrmToTs } from '../consts'
 
-export const getType = (type: string): string => {
-    const map: Record<string, string> = {
-        int: 'number',
-        string: 'string',
-        float: 'number',
-        varchar: 'string'
-    }
-
-    return map[type] || ''
-}
+export const getType = (type: string): string => typeOrmToTs[type] || ''
 
 export const getRelationshipType = (relationship: EntitySchemaRelationOptions) => {
     return `${relationship.target}${relationship.type === 'one-to-many' || relationship.type === 'many-to-many' ? '[]' : ''}`

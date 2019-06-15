@@ -1,0 +1,4 @@
+type User @Entity {
+    first: String! @PrimaryColumn
+    last: String! @PrimaryColumn
+}
