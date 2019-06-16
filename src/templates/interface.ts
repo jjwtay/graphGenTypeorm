@@ -18,7 +18,7 @@ export const columnToTypeField = (column: EntitySchemaColumnOptions, name: strin
     return `${name}${column.nullable ?  '?': ''}: ${getType(column.type as string)};`
 }
 
-export const toTS = (entitySchema: EntitySchemaOptions<{}>) => `export interface ${entitySchema.name} {
+export default (entitySchema: EntitySchemaOptions<{}>) => `export interface ${entitySchema.name} {
     ${R.pipe(
         R.mapObjIndexed(columnToTypeField),
         R.values,
@@ -31,13 +31,3 @@ export const toTS = (entitySchema: EntitySchemaOptions<{}>) => `export interface
     )(entitySchema.relations)}
 }
 `
-
-export const toJS = (entitySchema: EntitySchemaOptions<{}>) => `/** @typedef { import('../types').${entitySchema.name} } ${entitySchema.name}`
-/*
-export const toJS = R.pipe(
-    R.propOr({}, 'relations'),
-    R.mapObjIndexed((value, name) => `/** @typedef {import('./types').${(value as any).target}} ${name}`),
-    R.values,
-    R.join('\n')
-)
-*/

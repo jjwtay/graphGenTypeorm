@@ -1,23 +1,18 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, write } from 'fs'
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'fs'
 import prettier from 'prettier'
-//import { toTS, toJS } from './templates/model'
 import { model as toTS } from './templates/model/toTS'
 import { model as toJS } from './templates/model/toJS'
-import { toTS as toInterface } from './templates/interface'
 import { toGraphQL as toGraphQLQueries }  from './templates/query'
 import { toGraphQL as toGraphQLMutations } from './templates/mutation'
 import { toSchema } from 'graphschematojson/dist'
 import { toTS as toTSContext } from './templates/context'
-import findOneInput from './templates/findOneType'
-import createUpdateInput from './templates/createUpdateType'
-import { EntitySchemaOptions } from 'typeorm/entity-schema/EntitySchemaOptions'
-import toResolverType from './templates/resolverTypes'
+import typesString from './templates/types'
 import { fromSchema } from '.'
 import * as R from 'ramda'
 
-interface Config {
+export interface Config {
     outDir: string
     file?: string
     dir?: string
@@ -119,29 +114,7 @@ R.pipe(
             }))
         }
 
-        const typeFile = R.pipe<
-            typeof types,
-            Record<string, string[]>,
-            Record<string, string>,
-            string[],
-            string,
-            string,
-            string,
-            string
-        > (
-            R.mapObjIndexed((entity: EntitySchemaOptions<{}>, name) => [
-                toInterface(entity),
-                findOneInput(entity),
-                createUpdateInput(entity),
-                toResolverType(entity.name),
-            ]),
-            R.mapObjIndexed(R.join('\n\n')),
-            R.values,
-            R.join('\n'),
-            R.concat('export type ResolverFunction<S,T,U,V> = (parent: S, args: T, context: U) => V\n\n'),
-            R.concat(`import { Context } from '${config.contextPath || './context'}'\n\n`),
-            R.concat(`import { QueryArgs } from 'graphql_typeorm/dist/query'\n`)
-        )(types)
+        const typeFile = typesString(types, config.contextPath)
 
         writeFileSync(`${config.outDir}/types.ts`, prettier.format(typeFile, {
             singleQuote: true,
