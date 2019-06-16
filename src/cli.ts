@@ -2,13 +2,18 @@
 
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, write } from 'fs'
 import prettier from 'prettier'
-import { toTS, toJS } from './templates/model'
+//import { toTS, toJS } from './templates/model'
+import { model as toTS } from './templates/model/toTS'
+import { model as toJS } from './templates/model/toJS'
 import { toTS as toInterface } from './templates/types'
 import { toGraphQL as toGraphQLQueries }  from './templates/query'
 import { toGraphQL as toGraphQLMutations } from './templates/mutation'
 import { toSchema } from 'graphschematojson/dist'
 import { toTS as toTSContext } from './templates/context'
+import findOneInput from './templates/findOneType'
+import createUpdateInput from './templates/createUpdateType'
 import { EntitySchemaOptions } from 'typeorm/entity-schema/EntitySchemaOptions'
+import toResolverType from './templates/resolverTypes'
 import { fromSchema } from '.'
 import * as R from 'ramda'
 
@@ -17,7 +22,7 @@ interface Config {
     file?: string
     dir?: string
     format: 'ts' | 'js'
-    contextPath: string
+    contextPath?: string
 }
 
 interface CliArgs extends Config {
@@ -31,7 +36,7 @@ const getArgs = R.reduce<string, CliArgs>((acc, arg: string) => {
         return R.assoc(split[0], split[1], acc)
     }
     return acc
-}, { format: 'ts', outDir: './generated', contextPath: '../context'})
+}, { format: 'ts', outDir: './generated' })
 
 const mergeConfig = (args: CliArgs) => {
     if (args.config) {
@@ -92,24 +97,6 @@ R.pipe(
                 }))
             }, types)
 
-            const typeFile = R.pipe<
-                typeof types,
-                Record<string, string>,
-                string[],
-                string
-            > (
-                R.mapObjIndexed((entity: EntitySchemaOptions<{}>, name) => toInterface(entity)),
-                R.values,
-                R.join('\n')
-            )(types)
-
-            writeFileSync(`${config.outDir}/models/types.ts`, prettier.format(typeFile, {
-                singleQuote: true,
-                printWidth: 100,
-                tabWidth: 4,
-                parser: 'typescript',
-                semi: false             
-            }))
         } else {
             throw new Error('Output format has not been provided and cannot be inferred.')
         }
@@ -131,5 +118,34 @@ R.pipe(
                 semi: false
             }))
         }
+
+        const typeFile = R.pipe<
+            typeof types,
+            Record<string, string[]>,
+            Record<string, string>,
+            string[],
+            string,
+            string
+        > (
+            R.mapObjIndexed((entity: EntitySchemaOptions<{}>, name) => [
+                toInterface(entity),
+                findOneInput(entity),
+                createUpdateInput(entity),
+                toResolverType(entity.name)
+            ]),
+            R.mapObjIndexed(R.join('\n')),
+            R.values,
+            R.join('\n'),
+            R.concat(`import { Context } from '${config.contextPath || './context'}'\n`)
+        )(types)
+
+        writeFileSync(`${config.outDir}/types.ts`, prettier.format(typeFile, {
+            singleQuote: true,
+            printWidth: 100,
+            tabWidth: 4,
+            parser: 'typescript',
+            semi: false
+        }))
+
     }
 )(process.argv)

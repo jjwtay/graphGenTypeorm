@@ -32,7 +32,7 @@ export const toTS = (entitySchema: EntitySchemaOptions<{}>) => `export interface
 }
 `
 
-export const toJS = (entitySchema: EntitySchemaOptions<{}>) => `/** @typedef { import('./types').${entitySchema.name} } ${entitySchema.name}`
+export const toJS = (entitySchema: EntitySchemaOptions<{}>) => `/** @typedef { import('../types').${entitySchema.name} } ${entitySchema.name}`
 /*
 export const toJS = R.pipe(
     R.propOr({}, 'relations'),

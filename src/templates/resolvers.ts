@@ -7,7 +7,7 @@ import findOneType from './findOneType'
 import createUpdateType from './createUpdateType'
 
 export const lowerFirst = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
-
+/*
 export const getFindOneType = R.pipe<
     EntitySchemaOptions<{}>,
     Record<string, EntitySchemaColumnOptions>,
@@ -25,34 +25,10 @@ export const getFindOneType = R.pipe<
     R.join(', '),
     R.concat('{ '),
     (str: string) => `${str} }`
-)
+)*/
 
-export const toTS = <T>(entitySchema: EntitySchemaOptions<T>) => `
-${createUpdateType(entitySchema)}
-${findOneType(entitySchema)}
-${resolverType(entitySchema.name)}
-export const Resolvers: ${entitySchema.name}Resolver = {
-    Query: {
-        ${lowerFirst(entitySchema.name)}: (parent, args, context) =>
-            context.connection.getRepository(Model).findOne(args.input),
-
-        ${lowerFirst(entitySchema.name + 's')}: (parent, args, context) =>
-            context.connection.getRepository(Model).find(createQuery(args))
-    },
-    Mutation: {
-        create${entitySchema.name}: (parent, args, context) =>
-            context.connection.getRepository(Model).save(args.input),
-        
-        update${entitySchema.name}: async (parent, args, context) => {
-            await context.connection.getRepository(Model).update(args.id, args.patch)
-            return context.connection.getRepository(Model).findOne(args.id)
-        }
-    }
-}`
-
-export const toJS = <T>(entitySchema: EntitySchemaOptions<T>) => `
-/** @type { ${entitySchema.name}Resolver } */
-export const Resolvers = {
+export const resolvers = <T>(entitySchema: EntitySchemaOptions<T>) =>
+`{
     Query: {
         ${lowerFirst(entitySchema.name)}: (parent, args, context) =>
             context.connection.getRepository(Model).findOne(args.input),
