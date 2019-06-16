@@ -25,7 +25,10 @@ Automatically create TypeORM EntitySchema's, GraphQL resolvers, GraphQL Mutation
 | @Entity                 | [EntitySchemaOptions](https://github.com/jjwtay/graphGenTypeorm/blob/master/schemas/entity.graphql)| Determines what GraphQL Types get converted to TypeORM EntitySchema Models.|
 | @Column                 | [EntitySchemaColumnOptions](https://github.com/jjwtay/graphGenTypeorm/blob/master/schemas/column.graphql)| Determines what model fields are stored in database.|
 | @Relationship           | [EntitySchemaRelationshipOptions](https://github.com/typeorm/typeorm/blob/master/src/entity-schema/EntitySchemaRelationOptions.ts)| Determines that a relationship field should be created.|
+| @PrimaryColumn | [EntitySchemaColumnOptions](https://github.com/jjwtay/graphGenTypeorm/blob/master/schemas/column.graphql)| Shortcut for Column type with primary = true |
 | @PrimaryGeneratedColumn | [EntitySchemaColumnOptions](https://github.com/jjwtay/graphGenTypeorm/blob/master/schemas/column.graphql)| Shortcut for Column type with primary = true and generated = true| 
+| @CreateDateColumn | [EntitySchemaColumnOptions](https://github.com/jjwtay/graphGenTypeorm/blob/master/schemas/column.graphql)| Shortcut for Column type with type = 'timestamp with time zone' and createDate = true |
+| @UpdateDateColumn | [EntitySchemaColumnOptions](https://github.com/jjwtay/graphGenTypeorm/blob/master/schemas/column.graphql) | Shortcut for Column type with type = 'timestamp with time zone' and updateDate = true |
 
 # Example usage CLI
     npx graphql_typeorm dir=./schemas outDir=./generated
