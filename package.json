@@ -1,6 +1,6 @@
 {
   "name": "graphql_typeorm",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Automatically create TypeORM EntitySchema's, GraphQL resolvers, GraphQL Mutation, Query, and Input schemas from TypeORM annotated(directive) types.",
   "main": "./dist/index.js",
   "types": "./dist/*.d.ts",
