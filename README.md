@@ -39,7 +39,8 @@ Automatically create TypeORM EntitySchema's, GraphQL resolvers, GraphQL Mutation
 | file   |         | .graphql schema file to generate from |
 | dir    |         | Directory to find .graphql files to generate from |
 | outDir | ./generated | Directory to write generated files to |
-| format |   ts    | Output format. Valid options = ts/js
+| format |   ts    | Output format. Valid options = ts/js |
+| contextPath | ../context | Override with custom context type. Currently must include field connection: Connection.  Note:  path must be relative to generated root directory. |
 
 # Example usage code
 See src/cli.ts
