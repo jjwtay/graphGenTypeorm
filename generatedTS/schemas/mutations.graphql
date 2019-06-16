@@ -1,0 +1,53 @@
+
+
+input AuthorCreate {
+    name: String!
+	rating: Float
+}
+
+	
+input AuthorUpdate {
+    name: String
+	rating: Float
+}
+
+
+input BookCreate {
+    title: String!
+}
+
+	
+input BookUpdate {
+    title: String
+}
+
+
+input UserCreate {
+    first: String!
+	last: String!
+	createdAt: String!
+	updatedAt: String!
+}
+
+	
+input UserUpdate {
+    first: String
+	last: String
+	createdAt: String
+	updatedAt: String
+}
+
+
+type Mutation {
+    createAuthor(data: AuthorCreate): Author
+	updateAuthor(data: AuthorUpdate): Author
+	deleteAuthor(data: ID): ID
+
+	createBook(data: BookCreate): Book
+	updateBook(data: BookUpdate): Book
+	deleteBook(data: ID): ID
+
+	createUser(data: UserCreate): User
+	updateUser(data: UserUpdate): User
+	deleteUser(data: ID): ID
+}

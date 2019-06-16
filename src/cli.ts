@@ -5,7 +5,7 @@ import prettier from 'prettier'
 //import { toTS, toJS } from './templates/model'
 import { model as toTS } from './templates/model/toTS'
 import { model as toJS } from './templates/model/toJS'
-import { toTS as toInterface } from './templates/types'
+import { toTS as toInterface } from './templates/interface'
 import { toGraphQL as toGraphQLQueries }  from './templates/query'
 import { toGraphQL as toGraphQLMutations } from './templates/mutation'
 import { toSchema } from 'graphschematojson/dist'
@@ -125,18 +125,22 @@ R.pipe(
             Record<string, string>,
             string[],
             string,
+            string,
+            string,
             string
         > (
             R.mapObjIndexed((entity: EntitySchemaOptions<{}>, name) => [
                 toInterface(entity),
                 findOneInput(entity),
                 createUpdateInput(entity),
-                toResolverType(entity.name)
+                toResolverType(entity.name),
             ]),
-            R.mapObjIndexed(R.join('\n')),
+            R.mapObjIndexed(R.join('\n\n')),
             R.values,
             R.join('\n'),
-            R.concat(`import { Context } from '${config.contextPath || './context'}'\n`)
+            R.concat('export type ResolverFunction<S,T,U,V> = (parent: S, args: T, context: U) => V\n\n'),
+            R.concat(`import { Context } from '${config.contextPath || './context'}'\n\n`),
+            R.concat(`import { QueryArgs } from 'graphql_typeorm/dist/query'\n`)
         )(types)
 
         writeFileSync(`${config.outDir}/types.ts`, prettier.format(typeFile, {

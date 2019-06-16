@@ -1,0 +1,62 @@
+
+type Order {
+    name: String!
+    id: String!
+}
+
+
+type AuthorWhere {
+    id: FieldQueryNumber
+	name: FieldQueryString
+	rating: FieldQueryString
+}
+
+	
+input AuthorQuery {
+    where: AuthorWhere
+    take: number
+    skip: number
+    order: Order
+}
+
+
+type BookWhere {
+    id: FieldQueryNumber
+	title: FieldQueryString
+}
+
+	
+input BookQuery {
+    where: BookWhere
+    take: number
+    skip: number
+    order: Order
+}
+
+
+type UserWhere {
+    first: FieldQueryString
+	last: FieldQueryString
+	createdAt: FieldQueryString
+	updatedAt: FieldQueryString
+}
+
+	
+input UserQuery {
+    where: UserWhere
+    take: number
+    skip: number
+    order: Order
+}
+
+
+type Query {
+    author(id: Int): Author
+	authors(data: AuthorQuery): [Author]
+
+	book(id: Int): Book
+	books(data: BookQuery): [Book]
+
+	user(id: Int): User
+	users(data: UserQuery): [User]
+}

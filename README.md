@@ -41,10 +41,8 @@ Automatically create TypeORM EntitySchema's, GraphQL resolvers, GraphQL Mutation
 # Example usage code
 See src/cli.ts
 
-# Example output
-Run this command and check newly generated ./generated directory.
-
-    npx graphql_typeorm dir=./node_modules/graphql_typeorm/examples outDir=./generated
+# Example outputs
+Located within folders generatedTS and generatedJS.
 
 # TODO
 - Handle resolvers as normal vs connections. (Naming convention? New directive? Either?)
